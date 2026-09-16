@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id" oncontextmenu="return false" onselectstart="return false">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+    <title>TES KECERMATAN SERIES 2 (HOTS) - Persona Research & Consulting</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root{--navy:#0b2340;--gold:#d4a017;--gray:#f1f5f9;--danger:#c0392b;--btn-shadow: #cbd5e1;}
+        body { -webkit-user-select: none; user-select: none; margin:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#e2e8f0; display:flex; justify-content:center; min-height:100vh; color:#071130; }
+        .wrap{width:100%; max-width:980px; background:#fff; border-top:6px solid var(--navy); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.1); margin:20px; padding:30px; display: flex; flex-direction: column; min-height: 92vh;}
+        
+        .symbol-black { 
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+            font-weight: 900;
+            color: #000;
+        }
+
+        header{text-align:center; margin-bottom:20px;}
+        #loginBox{text-align:center; padding:50px 20px;}
+        input{padding:12px; width:260px; border:2px solid #cbd5e1; border-radius:8px; font-size:16px; text-align:center; outline:none;}
+        .btn-start{background:var(--navy); color:#fff; border:none; padding:12px 40px; border-radius:8px; font-size:16px; cursor:pointer; margin-top:20px; font-weight:600;}
+
+        #prepOverlay{position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.98); display:none; justify-content:center; align-items:center; z-index:1000; flex-direction:column;}
+        #countdownText{font-size:120px; font-weight:bold; color:var(--navy);}
+
+        .top-row{display:none; justify-content:space-between; align-items:center; background:var(--gray); padding:15px 25px; border-radius:10px; margin-bottom:20px;}
+        #timer{font-size:24px; font-weight:800; color:var(--danger); font-family: monospace;}
+
+        #testArea{display:none; flex-direction:column; align-items:center; gap:20px; flex-grow: 1;}
+        .acuan-table{border-collapse:collapse; margin-bottom:10px; table-layout: fixed; width: 380px;}
+        .acuan-table td{border:2px solid var(--navy); width:76px; height:70px; text-align:center; font-size:38px; background:#fff; vertical-align: middle;}
+        .acuan-table td.label{background:var(--navy); color:#fff; font-size:18px; height:35px; filter: none !important;}
+
+        .soal-box{font-size:44px; letter-spacing:12px; padding:20px; background:var(--gray); border-radius:15px; min-height:80px; width: 100%; max-width: 480px; text-align: center; display: flex; justify-content: center; align-items: center; gap: 12px;}
+        
+        .pilihan-grid{display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; width:100%; max-width:480px; margin-bottom: 20px;}
+        .pilihan-btn{background:#fff; border:2px solid var(--navy); padding:18px; font-size:22px; font-weight:700; border-radius:10px; cursor:pointer; box-shadow: 0 4px 0 var(--btn-shadow);}
+        .pilihan-btn:active{transform:translateY(4px); box-shadow:none;}
+
+        #resultArea{display:none;}
+        .summary-cards{display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin:20px 0;}
+        .card-skor{background:#f8fafc; padding:15px; border-radius:10px; text-align:center; border:1px solid #e2e8f0;}
+        .card-skor b{display:block; font-size:11px; color:#64748b; margin-bottom:5px; text-transform: uppercase;}
+        .val-skor{font-size:28px; font-weight:900; color:var(--navy); line-height: 1;}
+        .card-akhir{grid-column: span 2; background:var(--navy) !important; color:#fff !important;}
+        .card-akhir .val-skor{color:var(--gold); font-size:42px;}
+        
+        .table-res{width:100%; border-collapse:collapse; font-size: 11px; margin-top: 15px;}
+        .table-res th, .table-res td{border:1px solid #cbd5e1; padding:8px; text-align:center;}
+        .table-res th{background:var(--navy); color:#fff;}
+    </style>
+</head>
+<body>
+
+<div class="wrap" id="captureArea">
+    <header>
+        <h1 style="font-size: 18px; color: var(--navy); margin:0;">TES KECERMATAN - SERIES 2 (SIMBOL TINGKAT TINGGI / HOTS)</h1>
+        <p style="font-size: 11px; color: #64748b; margin: 3px 0 0 0;">Persona Research & Consulting</p>
+    </header>
+
+    <div id="loginBox">
+        <input type="text" id="username" placeholder="Nama Lengkap Siswa..." autocomplete="off">
+        <br><button class="btn-start" onclick="startLogin()">MULAI SIMULASI</button>
+    </div>
+
+    <div id="prepOverlay">
+        <div style="font-size:18px; margin-bottom:10px; color: #64748b;">KONSENTRASI PENUH PADA DETAIL PERBEDAAN SIMBOL...</div>
+        <div id="countdownText">3</div>
+    </div>
+
+    <div class="top-row" id="topRow">
+        <div id="kolomInfo" style="font-weight: bold;">KOLOM: 1 / 10</div>
+        <div id="timer">00:60</div>
+    </div>
+
+    <div id="testArea">
+        <table class="acuan-table">
+            <tr id="rowSimbol"></tr>
+            <tr id="rowLabel"></tr>
+        </table>
+        <div class="soal-box" id="soalCont"></div>
+        <div id="pilihan" class="pilihan-grid"></div>
+    </div>
+
+    <div id="resultArea">
+        <h2 style="text-align: center; font-size: 18px; margin-bottom: 5px;">LAPORAN HASIL AKHIR</h2>
+        <p id="resName" style="text-align:center; font-weight:900; font-size:22px; color:var(--navy); margin:0 0 15px 0; border-bottom: 2px solid var(--navy); padding-bottom:10px; text-transform: uppercase;"></p>
+        
+        <div id="summaryBox" class="summary-cards"></div>
+
+        <div style="background:#f1f5f9; padding:15px; border-radius:10px; border:1px solid #cbd5e1; margin-bottom:15px;">
+            <b style="color:var(--navy); font-size:13px;">ANALISA HASIL / INTERPRETASI:</b>
+            <div id="kesimpulanNarasi" style="margin-top:8px; line-height:1.5; font-size:12px; color:#334155;"></div>
+        </div>
+
+        <table class="table-res">
+            <thead><tr><th>Kolom</th><th>Terjawab</th><th>Benar</th><th>Salah</th><th>+/-</th></tr></thead>
+            <tbody id="tbodyHasil"></tbody>
+        </table>
+        <div style="margin-top:20px; height: 200px;"><canvas id="chartPauli"></canvas></div>
+        <button id="btnDownload" style="background:#27ae60; color:#fff; border:none; padding:16px; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:20px; width:100%;" onclick="downloadFullPDF()">📥 DOWNLOAD HASIL (PDF)</button>
+        <button style="background:var(--navy); color:#fff; border:none; padding:16px; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px; width:100%;" onclick="window.location.href='index.html'">🏠 KEMBALI KE BERANDA</button>
+    </div>
+</div>
+
+<script>
+    // Bank Simbol HOTS: Menggunakan kemiripan bentuk visual (panah, lingkaran bergradasi, orientasi sudut)
+    const MASTER_BANK = [
+        ["⊕", "⊗", "⊙", "⊞", "⊛"], // Variasi Lingkaran Bergaris
+        ["➔", "➘", "➔", "➔", "➦"], // Variasi Arah Panah Mirip
+        ["▲", "▼", "◄", "►", "⊿"], // Orientasi Segitiga
+        ["⬡", "⬢", "⬟", "⬙", "⬘"], // Poligon & Irisan
+        ["★", "✦", "✶", "✴", "✹"], // Variasi Bintang & Sudut Sinar
+        ["✝", "✚", "✢", "✣", "✤"], // Variasi Palang & Salib
+        ["◧", "◨", "◩", "◪", "■"], // Isian Blok Persegi
+        ["⨀", "⨁", "⨂", "⨃", "⨄"], // Simbol Matematika Kompleks
+        ["⬍", "⬌", "⬍", "⬍", "⇄"], // Kombinasi Panah Dua Arah
+        ["◴", "◵", "◶", "◷", "◯"]  // Orientasi Lingkaran Bersektor
+    ];
+
+    let currentIdx = 0, timerLeft = 60, interval = null, results = [], pName = "", activeChars = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const name = localStorage.getItem('prc_nama_peserta');
+        if(name) document.getElementById('username').value = name;
+    });
+
+    function startLogin() {
+        const u = document.getElementById('username').value.trim();
+        if(!u) return alert('Nama wajib diisi!');
+        pName = u;
+        localStorage.setItem('prc_nama_peserta', pName);
+        document.getElementById('loginBox').style.display = 'none';
+        triggerCountdown();
+    }
+
+    function triggerCountdown() {
+        document.getElementById('testArea').style.display = 'none';
+        const overlay = document.getElementById('prepOverlay');
+        const countText = document.getElementById('countdownText');
+        overlay.style.display = 'flex';
+        let count = 3; countText.textContent = count;
+        let t = setInterval(() => {
+            count--; 
+            if(count > 0) countText.textContent = count;
+            else { clearInterval(t); overlay.style.display = 'none'; startCol(); }
+        }, 1000);
+    }
+
+    function startCol() {
+        activeChars = [...MASTER_BANK[currentIdx]].sort(() => Math.random() - 0.5);
+        timerLeft = 60;
+        if(!results[currentIdx]) results.push({t:0, b:0, s:0});
+        document.getElementById('topRow').style.display = 'flex';
+        document.getElementById('testArea').style.display = 'flex';
+        document.getElementById('kolomInfo').textContent = `KOLOM: ${currentIdx + 1} / 10`;
+        
+        let hSimbol = '', hLabel = '';
+        activeChars.forEach((c, i) => {
+            hSimbol += `<td><span class="symbol-black">${c}</span></td>`;
+            hLabel += `<td class="label">${String.fromCharCode(65+i)}</td>`;
+        });
+        document.getElementById('rowSimbol').innerHTML = hSimbol;
+        document.getElementById('rowLabel').innerHTML = hLabel;
+
+        nextSoal();
+        if(interval) clearInterval(interval);
+        interval = setInterval(() => {
+            timerLeft--;
+            document.getElementById('timer').textContent = `00:${String(timerLeft).padStart(2,'0')}`;
+            if(timerLeft <= 0) {
+                clearInterval(interval);
+                currentIdx++;
+                if(currentIdx < 10) triggerCountdown(); else showFinal();
+            }
+        }, 1000);
+    }
+
+    function nextSoal() {
+        const missingIdx = Math.floor(Math.random() * 5);
+        const correctLabel = String.fromCharCode(65 + missingIdx);
+        const display = activeChars.filter((_, i) => i !== missingIdx).sort(() => Math.random() - 0.5);
+        const soalCont = document.getElementById('soalCont');
+        soalCont.innerHTML = display.map(s => `<span class="symbol-black">${s}</span>`).join('');
+        const cont = document.getElementById('pilihan');
+        cont.innerHTML = '';
+        ['A','B','C','D','E'].forEach(l => {
+            const btn = document.createElement('button');
+            btn.className = 'pilihan-btn'; btn.textContent = l;
+            btn.onclick = () => { 
+                results[currentIdx].t++; 
+                if(l === correctLabel) results[currentIdx].b++; else results[currentIdx].s++; 
+                nextSoal(); 
+            };
+            cont.appendChild(btn);
+        });
+    }
+
+    function showFinal() {
+        document.getElementById('testArea').style.display = 'none';
+        document.getElementById('topRow').style.display = 'none';
+        document.getElementById('resultArea').style.display = 'block';
+        document.getElementById('resName').textContent = pName;
+        
+        const terjawab = results.map(r => r.t);
+        const totalB = results.reduce((a, b) => a + b.b, 0);
+        const totalS = results.reduce((a, b) => a + b.s, 0);
+        const minK = Math.min(...terjawab);
+        const maxK = Math.max(...terjawab);
+        const range = maxK - minK;
+        const skoreTotalKeseluruhan = totalB + totalS;
+
+        const nilaiSkala100 = Math.min(100, Math.round((totalB / 400) * 100));
+        localStorage.setItem('prc_nilai_kecermatan_2', nilaiSkala100);
+
+        document.getElementById('summaryBox').innerHTML = `
+            <div class="card-skor"><b>KECEPATAN (MIN)</b><div class="val-skor">${minK}</div></div>
+            <div class="card-skor"><b>KETELITIAN (SALAH)</b><div class="val-skor">${totalS}</div></div>
+            <div class="card-skor"><b>KESTABILAN (RANGE)</b><div class="val-skor">${range}</div></div>
+            <div class="card-skor"><b>SKORE TOTAL KESELURUHAN</b><div class="val-skor">${skoreTotalKeseluruhan}</div></div>
+            <div class="card-akhir card-skor"><b>TOTAL POIN BENAR (SKOR CAT: ${nilaiSkala100})</b><div class="val-skor">${totalB}</div></div>
+        `;
+
+        let narasi = `Saudara ${pName} menyelesaikan total ${skoreTotalKeseluruhan} soal. `;
+        narasi += totalS <= 5 ? "Tingkat ketelitian sangat baik pada level soal HOTS. " : "Perlu meningkatkan ketelitian ekstra untuk membedakan bentuk simbol yang mirip. ";
+        narasi += range <= 5 ? "Stabilitas kerja sangat konsisten." : "Fluktuasi grafik menunjukkan konsentrasi yang naik turun saat menghadapi kerumitan simbol.";
+        document.getElementById('kesimpulanNarasi').textContent = narasi;
+
+        let h = '';
+        results.forEach((r, i) => { 
+            let fluk = i === 0 ? 0 : r.t - results[i-1].t;
+            h += `<tr><td>${i+1}</td><td>${r.t}</td><td>${r.b}</td><td>${r.s}</td><td>${fluk > 0 ? '+'+fluk : fluk}</td></tr>`; 
+        });
+        document.getElementById('tbodyHasil').innerHTML = h;
+
+        new Chart(document.getElementById('chartPauli'), {
+            type: 'line',
+            data: {
+                labels: [1,2,3,4,5,6,7,8,9,10],
+                datasets: [{ label: 'Kecepatan', data: terjawab, borderColor: '#0b2340', tension: 0.3, fill: true, backgroundColor: 'rgba(11,35,64,0.1)' }]
+            },
+            options: { maintainAspectRatio: false }
+        });
+    }
+
+    async function downloadFullPDF() {
+        const btn = document.getElementById('btnDownload');
+        btn.style.display = 'none';
+        const element = document.getElementById('captureArea');
+        const canvas = await html2canvas(element, { scale: 2 });
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const w = pdf.internal.pageSize.getWidth();
+        const h = (canvas.height * w) / canvas.width;
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, w, h);
+        pdf.save(`Hasil_Kecermatan_Series2_HOTS_${pName}.pdf`);
+        btn.style.display = 'block';
+    }
+</script>
+</body>
+</html>

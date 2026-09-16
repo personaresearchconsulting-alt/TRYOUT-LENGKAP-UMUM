@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Kepribadian (TKP) - 50 Soal Utuh</title>
+    <style>
+        :root { --navy: #0b2340; --gold: #d4a017; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #1e293b; -webkit-user-select: none; user-select: none; }
+        header { background: var(--navy); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--gold); }
+        .container { max-width: 950px; margin: 20px auto; padding: 0 15px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .opt { padding: 14px; margin: 8px 0; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .opt:hover { background: #f1f5f9; border-color: var(--navy); }
+        .opt.selected { background: #e0f2fe; border-color: var(--navy); font-weight: bold; }
+        .nav-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin-top: 15px; }
+        .nav-item { height: 35px; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .nav-item.filled { background: var(--navy); color: white; }
+        .nav-item.active { border: 2px solid var(--gold); }
+        .btn { background: var(--navy); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        #timer { font-size: 20px; font-weight: bold; color: var(--gold); font-family: monospace; }
+    </style>
+</head>
+<body oncontextmenu="return false">
+
+<div class="container">
+    <header>
+        <div><b>PAKET TES KEPRIBADIAN</b> | 50 SOAL HOTS</div>
+        <div id="timer">60:00</div>
+    </header>
+
+    <div style="display:flex; gap:20px; margin-top:20px;">
+        <div style="flex:3;">
+            <div class="card">
+                <div id="q-no" style="font-weight:bold; color:var(--navy); margin-bottom:10px;">Soal 1 dari 50</div>
+                <div id="q-text" style="font-size:15px; line-height:1.6; margin-bottom:20px;"></div>
+                <div id="options"></div>
+                <div style="margin-top:25px; display:flex; justify-content:space-between;">
+                    <button class="btn" onclick="prevQ()" style="background:#64748b">Sebelumnya</button>
+                    <button class="btn" id="btn-next" onclick="nextQ()">Selanjutnya</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="flex:1;">
+            <div class="card" style="padding:15px;">
+                <div style="text-align:center; font-size:12px; font-weight:bold; margin-bottom:10px;">NAVIGASI SOAL</div>
+                <div id="navGrid" class="nav-grid"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const bankTKP = [
+        { q: "Saat Anda bertugas sebagai penanggung jawab verifikasi berkas perizinan, kerabat dekat Anda meminta bantuan agar kelengkapan dokumennya diprioritaskan dan dibantu walau ada kekurangan kecil. Sikap Anda adalah...", opts: [{t: "Menolak secara halus dan menegaskan bahwa seluruh proses verifikasi harus sesuai SOP tanpa pengecualian.", s: 5}, {t: "Membantu melengkapi kekurangan dokumennya di luar jam kerja agar tidak mengganggu antrian.", s: 3}, {t: "Meminta rekan staf lain yang memproses berkas kerabat tersebut agar merasa lebih objektif.", s: 4}, {t: "Memberikan keringanan syarat khusus untuk kali ini saja karena ia kerabat dekat.", s: 2}, {t: "Pura-pura tidak mengenalnya dan menolak permohonannya secara tegas di depan umum.", s: 1}] },
+        { q: "Instansi tempat Anda bekerja meluncurkan platform digital baru untuk integrasi pelayanan publik. Banyak pegawai senior merasa kesulitan beradaptasi dengan teknologi tersebut. Tindakan Anda adalah...", opts: [{t: "Fokus menggunakan aplikasi tersebut untuk mempercepat penyelesaian tugas mandiri.", s: 3}, {t: "Mempelajari fitur aplikasi hingga mahir, lalu bersedia meluangkan waktu mendampingi rekan senior.", s: 5}, {t: "Mengusulkan kepada pimpinan agar pegawai senior diberi pengecualian menggunakan cara manual.", s: 2}, {t: "Mengambil alih seluruh pengerjaan input data milik pegawai senior yang kesulitan.", s: 4}, {t: "Menyampaikan saran kritik bahwa aplikasi baru belum ramah bagi seluruh kalangan pegawai.", s: 1}] },
+        { q: "Seorang warga masyarakat mendatangi loket pelayanan Anda dengan nada emosional karena keluhan layanannya terlambat diproses akibat kendala sistem. Sikap Anda adalah...", opts: [{t: "Mendengarkan keluhannya dengan tenang, menyampaikan permohonan maaf, dan mengecek kendala teknisnya.", s: 5}, {t: "Meminta petugas keamanan mengarahkan warga tersebut keluar dari area pelayanan.", s: 2}, {t: "Menjelaskan dengan nada tegas bahwa keterlambatan disebabkan oleh kendala sistem pusat.", s: 4}, {t: "Membiarkan warga meluapkan emosinya hingga mereda sendiri baru diajak berbicara.", s: 3}, {t: "Membalas dengan nada keras agar warga tersebut menjaga ketertiban umum.", s: 1}] },
+        { q: "Anda ditunjuk sebagai ketua tim untuk menyusun draf kebijakan strategis. Salah satu anggota tim tidak pernah hadir dalam rapat persiapan karena alasan tugas dinas lain. Tindakan Anda adalah...", opts: [{t: "Mengeluarkan anggota tersebut dari tim dan melaporkannya kepada atasan.", s: 2}, {t: "Membagi porsi tugas secara tertulis dan menghubunginya untuk menyepakati target pengerjaan mandiri.", s: 5}, {t: "Mengerjakan porsi tugas anggota tersebut bersama anggota tim lain yang hadir.", s: 4}, {t: "Menunggu kehadiran anggota tersebut baru melanjutkan pengerjaan draf kebijakan.", s: 3}, {t: "Mengabaikan ketidakhadirannya dan membiarkannya tidak mendapatkan nilai kinerja.", s: 1}] },
+        { q: "Di akhir jam kerja, ketika Anda bersiap pulang, atasan memberikan tugas mendesak yang harus diselesaikan dan dikirimkan malam ini juga. Sikap Anda adalah...", opts: [{t: "Menerima tugas tersebut dengan penuh tanggung jawab, menyelesaikan hingga selesai, baru kemudian pulang.", s: 5}, {t: "Mengajak rekan kerja lain untuk membantu pengerjaan tugas agar bisa selesai lebih cepat.", s: 4}, {t: "Meminta izin menunda pekerjaan tersebut besok pagi-pagi sekali di kantor.", s: 3}, {t: "Mengerjakan tugas seadanya agar bisa cepat pulang sesuai jam kerja.", s: 2}, {t: "Menolak tugas tersebut karena jam kerja dinas resmi telah berakhir.", s: 1}] },
+        { q: "Anda menemukan bahwa terdapat kelemahan pada sistem pengolahan data keuangan instansi yang dapat memicu risiko celah kesalahan anggaran. Sikap Anda adalah...", opts: [{t: "Menyusun draf analisis celah risiko tersebut beserta usulan teknis solusinya untuk dilaporkan ke pimpinan.", s: 5}, {t: "Membiarkannya selama tidak ada kerugian keuangan negara yang terjadi.", s: 1}, {t: "Membicarakan celah tersebut dengan rekan sejawat saat jam istirahat.", s: 3}, {t: "Menginformasikan temuan ini kepada bagian IT dan pengawasan internal untuk ditindaklanjuti.", s: 4}, {t: "Menggunakan celah tersebut untuk menguji keakuratan perhitungan pribadi.", s: 2}] },
+        { q: "Ketika Anda menyampaikan presentasi mengenai ide inovasi layanan publik, seorang rekan kerja memberikan kritik keras yang memojokkan gagasan Anda. Sikap Anda adalah...", opts: [{t: "Mendengarkan kritik tersebut dengan tenang, mencatat poin evaluasinya, dan merespon berdasar data.", s: 5}, {t: "Langsung memotong pembicaraannya dan menyanggah kritik yang tidak relevan.", s: 2}, {t: "Mengabaikan kritikan tersebut dan melanjutkan presentasi hingga selesai.", s: 3}, {t: "Meminta masukan lebih detail di akhir sesi presentasi untuk penyempurnaan inovasi.", s: 4}, {t: "Merasa tersinggung dan menyerahkan kelanjutan presentasi kepada rekan tim lain.", s: 1}] },
+        { q: "Anda dipindahtugaskan ke unit kerja daerah terpencil yang minim sarana dan memiliki keberagaman budaya baru. Langkah pertama Anda adalah...", opts: [{t: "Menerima keputusan penugasan, segera beradaptasi dengan budaya lokal, dan mengoptimalkan sarana yang ada.", s: 5}, {t: "Menjalankan tugas seadanya sambil mengajukan permohonan pindah kembali ke kota asal.", s: 2}, {t: "Mempelajari karakteristik masyarakat setempat agar dapat memberikan pelayanan yang sesuai.", s: 4}, {t: "Meminta kelengkapan fasilitas standar dipenuhi terlebih dahulu sebelum memulai tugas.", s: 3}, {t: "Mengajukan protes kepada bagian kepegawaian atas lokasi penugasan baru.", s: 1}] },
+        { q: "Tim Anda gagal memenuhi target penyelesaian laporan tahunan tepat waktu karena keterlambatan pengumpulan data dari salah satu subbidang. Tindakan Anda sebagai penanggung jawab adalah...", opts: [{t: "Mengaku keterlambatan sebagai tanggung jawab tim dan segera menyusun langkah korektif percepatan.", s: 5}, {t: "Menjelaskan kepada atasan bahwa keterlambatan murni kesalahan dari subbidang terkait.", s: 2}, {t: "Meminta maaf atas keterlambatan dan berjanji akan menyerahkan laporan dalam waktu secepatnya.", s: 4}, {t: "Menyalahkan alokasi waktu target yang diberikan atasan terlalu singkat.", s: 1}, {t: "Mengarahkan subbidang yang terlambat untuk menghadap pimpinan secara langsung.", s: 3}] },
+        { q: "Seorang mitra kerja memberikan cenderamata berharga tinggi sebagai bentuk apresiasi atas kelancaran kerja sama program instansi. Tindakan Anda adalah...", opts: [{t: "Menolak pemberian tersebut secara sopan dan menjelaskan aturan mengenai larangan penerimaan gratifikasi.", s: 5}, {t: "Menerima cenderamata tersebut lalu melaporkannya kepada Unit Pengendalian Gratifikasi instansi.", s: 4}, {t: "Menerima pemberian tersebut karena merasa tidak ada benturan kepentingan.", s: 1}, {t: "Menyarankan agar cenderamata tersebut diserahkan atas nama instansi, bukan pribadi.", s: 3}, {t: "Menerimanya tetapi membagikannya kembali kepada anggota staf operasional kantor.", s: 2}] },
+        { q: "Anda dipercaya memimpin sebuah proyek lintas divisi yang setiap anggotanya memiliki latar belakang keahlian berbeda. Langkah awal Anda adalah...", opts: [{t: "Mengadakan konsolidasi awal, memetakan keahlian anggota, dan menyepakati target kerja bersama.", s: 5}, {t: "Membagi porsi tugas secara merata berdasarkan deskripsi kerja umum masing-masing.", s: 4}, {t: "Mengerjakan bagian-bagian paling krusial sendiri agar standar kualitas proyek terjaga.", s: 3}, {t: "Menyerahkan alur kerja kepada kesepakatan internal masing-masing divisi.", s: 2}, {t: "Menunggu arahan teknis lebih rinci dari pimpinan sebelum membagi tugas.", s: 1}] },
+        { q: "Gagasan inovasi yang Anda ajukan untuk efisiensi anggaran ditolak oleh atasan dalam rapat pimpinan. Sikap Anda adalah...", opts: [{t: "Menerima keputusan penolakan dengan lapang dada dan menanyakan masukan untuk perbaikan draf.", s: 5}, {t: "Merasa kecewa dan memilih tidak lagi mengajukan ide inovasi dalam rapat berikutnya.", s: 1}, {t: "Mencari waktu khusus di luar rapat untuk menjelaskan kembali potensi manfaat ide Anda.", s: 4}, {t: "Mengikuti keputusan atasan tanpa melakukan revisi apapun pada gagasan tersebut.", s: 3}, {t: "Mempertahankan gagasan tersebut secara alot dalam forum rapat.", s: 2}] },
+        { q: "Atasan memberikan instruksi kerja teknis yang menurut penilaian Anda kurang sesuai dengan SOP kedinasan yang berlaku. Tindakan Anda adalah...", opts: [{t: "Menyampaikan pandangan secara sopan dan privat beserta regulasi SOP yang menjadi acuan.", s: 5}, {t: "Melaksanakan perintah tersebut sepenuhnya karena mengutamakan kepatuhan pimpinan.", s: 2}, {t: "Mengkonsultasikan instruksi tersebut kepada unit pengawasan internal.", s: 4}, {t: "Menolak secara langsung perintah tersebut di depan forum rapat internal.", s: 3}, {t: "Pura-pura tidak memahami instruksi tersebut dan menunda pengerjaannya.", s: 1}] },
+        { q: "Instansi Anda mewajibkan seluruh pegawai menggunakan aplikasi manajemen tugas baru berbasis komputasi awan. Tindakan Anda adalah...", opts: [{t: "Pelajari aplikasi secara mandiri hingga mahir dan bantu rekan-rekan yang mengalami kendala.", s: 5}, {t: "Mengikuti alur penggunaan aplikasi jika sudah diadakan pelatihan resmi dari kantor.", s: 3}, {t: "Menguasai fitur-fitur penting aplikasi untuk mendukung kelancaran pekerjaan sendiri.", s: 4}, {t: "Mengusulkan agar sistem manual tetap diperbolehkan selama masa transisi.", s: 2}, {t: "Menunggu pegawai lain mahir terlebih dahulu baru ikut mempelajari aplikasi tersebut.", s: 1}] },
+        { q: "Rekan kerja satu unit memberikan kritik terhadap gaya komunikasi Anda yang dianggap terlalu kaku saat menangani masyarakat. Sikap Anda adalah...", opts: [{t: "Menerima masukan tersebut secara terbuka dan berusaha memperbaiki pendekatan komunikasi publik Anda.", s: 5}, {t: "Mengabaikan saran tersebut karena merasa gaya komunikasi Anda sudah sesuai standar.", s: 2}, {t: "Meminta penjelasan spesifik pada bagian mana gaya komunikasi Anda perlu ditingkatkan.", s: 4}, {t: "Menjelaskan bahwa ketegasan diperlukan dalam menangani masyarakat.", s: 3}, {t: "Membalas kritik dengan menunjukkan kelemahan gaya komunikasi rekan tersebut.", s: 1}] },
+        { q: "Saat Anda sedang fokus menyelesaikan laporan utama yang tenggat waktunya hari ini, atasan memberi perintah mendadak untuk menyusun bahan rapat dinas. Sikap Anda adalah...", opts: [{t: "Menjelaskan prioritas tenggat laporan utama secara ringkas dan meminta arahan penyelesaian keduanya.", s: 5}, {t: "Meninggalkan laporan utama untuk segera menyelesaikan bahan rapat perintah atasan.", s: 3}, {t: "Mengerjakan bahan rapat secepat mungkin lalu melanjutkan pengerjaan laporan utama.", s: 4}, {t: "Menolak perintah mendadak atasan karena sedang menyelesaikan laporan penting.", s: 2}, {t: "Meminta bantuan rekan kerja lain untuk mengisikan draf bahan rapat tersebut.", s: 1}] },
+        { q: "Pemerintah mengeluarkan regulasi tata kelola baru yang merombak mekanisme pelayanan di instansi Anda. Sikap Anda adalah...", opts: [{t: "Menyikapi positif perubahan tersebut, mempelajari regulasi baru, dan menyesuaikan alur kerja proaktif.", s: 5}, {t: "Menunggu juknis resmi dari atasan sebelum melakukan perubahan alur kerja.", s: 4}, {t: "Mengikuti penyesuaian baru sesuai porsi tugas yang diperintahkan saja.", s: 3}, {t: "Mengkritik perubahan regulasi karena dinilai menambah prosedur administrasi.", s: 2}, {t: "Tetap menerapkan alur kerja lama selama alur baru belum berjalan stabil.", s: 1}] },
+        { q: "Terjadi perselisihan pendapat yang cukup tajam antara dua staf bawahan Anda sehingga mengganggu suasana kerja tim. Tindakan Anda adalah...", opts: [{t: "Memanggil kedua staf, mendengarkan permasalahan secara objektif, dan mengarahkan pada solusi profesional.", s: 5}, {t: "Memberikan teguran keras kepada keduanya di depan anggota tim lain agar jera.", s: 2}, {t: "Mendengarkan penjelasan masing-masing secara terpisah sebelum mengambil keputusan.", s: 4}, {t: "Membiarkan mereka menyelesaikan masalah pribadi secara mandiri.", s: 1}, {t: "Memindahkan salah satu staf ke kelompok kerja lain untuk menghindari konflik.", s: 3}] },
+        { q: "Anda dipercaya mengelola dana kegiatan kehumasan instansi. Langkah Anda dalam menjamin akuntabilitas pengelolaannya adalah...", opts: [{t: "Mencatat seluruh transaksi secara terinci, mengumpulkan bukti sah, dan menyusun laporan berkala.", s: 5}, {t: "Menyimpan seluruh bukti transaksi dan menyerahkannya saat pemeriksaan akhir proyek.", s: 4}, {t: "Melaporkan penggunaan anggaran secara garis besar kepada pimpinan kegiatan.", s: 3}, {t: "Menyerahkan pencatatan keuangan sepenuhnya kepada bendahara staf pembantu.", s: 2}, {t: "Menggunakan dana sesuai skala prioritas tanpa perlu melakukan pencatatan kecil.", s: 1}] },
+        { q: "Sebuah ulasan negatif mengenai kualitas pelayanan unit Anda menjadi pembicaraan hangat di media sosial. Sikap Anda adalah...", opts: [{t: "Jadikan masukan tersebut sebagai bahan evaluasi internal untuk melakukan perbaikan kualitas layanan.", s: 5}, {t: "Melaporkan unggahan tersebut ke bagian kehumasan untuk memberikan klarifikasi resmi.", s: 4}, {t: "Meminta pemilik akun menghapus unggahan tersebut demi menjaga reputasi instansi.", s: 2}, {t: "Membalas komentar di media sosial menggunakan akun pribadi untuk meluruskan fakta.", s: 1}, {t: "Mengabaikan berita tersebut karena dinilai informasi di media sosial tidak sepenuhnya akurat.", s: 3}] },
+        { q: "Bagaimana cara Anda membagi fokus antara penyelesaian tugas rutin dinas dan peningkatan kompetensi karier pribadi?", opts: [{t: "Menyusun skala prioritas tugas harian dan memanfaatkan waktu luang untuk belajar mandiri.", s: 5}, {t: "Fokus penuh pada tugas dinas rutin dan menunda pengembangan kompetensi hingga jadwal senggang.", s: 4}, {t: "Mengikuti program pelatihan kompetensi hanya jika ditugaskan resmi oleh instansi.", s: 3}, {t: "Memanfaatkan jam kerja yang longgar untuk menyelesaikan materi kursus pribadi.", s: 2}, {t: "Meminta pengurangan beban kerja dinas agar memiliki waktu belajar lebih banyak.", s: 1}] },
+        { q: "Dalam antrian pelayanan publik, seorang pejabat lokal meminta diselesaikan berkasnya terlebih dahulu tanpa antri. Sikap Anda adalah...", opts: [{t: "Menjelaskan dengan sopan bahwa pelayanan dilaksanakan berdasarkan urutan nomor antrian demi kesetaraan.", s: 5}, {t: "Melayani pejabat tersebut terlebih dahulu untuk menjaga hubungan baik antarlembaga.", s: 1}, {t: "Mengarahkan pejabat tersebut ke ruang tunggu khusus sambil menunggu nomor antriannya dipanggil.", s: 4}, {t: "Meminta persetujuan warga di antrian terdepan untuk mendahulukan pejabat tersebut.", s: 2}, {t: "Konsultasi ke atasan langsung untuk meminta arahan penanganan hal tersebut.", s: 3}] },
+        { q: "Anda ditugaskan menyusun draf anggaran program tahunan. Rekan kerja menyarankan untuk menyalin draf tahun lalu agar efisien. Sikap Anda adalah...", opts: [{t: "Menolak saran tersebut dan melakukan analisis kebutuhan data terbaru walau butuh waktu lebih.", s: 5}, {t: "Menggunakan data draf tahun lalu dengan melakukan penyesuaian angka inflasi seadanya.", s: 2}, {t: "Berkonsultasi dengan atasan mengenai batasan waktu dan kedalaman analisis data anggaran.", s: 4}, {t: "Menyalin draf tahun lalu agar target penyelesaian dokumen cepat terpenuhi.", s: 1}, {t: "Menggabungkan data lama dengan sampel data baru yang mudah dijangkau.", s: 3}] },
+        { q: "Anda melihat beberapa rekan kerja sering mengabaikan prosedur Keselamatan dan Kesehatan Kerja (K3) saat bertugas di lapangan. Tindakan Anda adalah...", opts: [{t: "Mengingatkan pentingnya keselamatan kerja, memberi teladan penerapan K3, dan melaporkan ke pengawas.", s: 5}, {t: "Menegur rekan-rekan yang lalai secara langsung di lokasi kerja lapangan.", s: 3}, {t: "Tetap mematuhi aturan K3 untuk diri sendiri tanpa mencampuri kebiasaan rekan lain.", s: 2}, {t: "Mengusulkan sesi penyegaran sosialisasi K3 kepada pimpinan unit.", s: 4}, {t: "Membiarkan hal tersebut karena menganggap mereka sudah berpengalaman di lapangan.", s: 1}] },
+        { q: "Dalam diskusi penetapan program kerja, terjadi perdebatan sengit antara dua kelompok anggota rapat. Sikap Anda sebagai pimpinan rapat adalah...", opts: [{t: "Mendinginkan suasana, menginventarisir poin-poin kesepakatan, dan memfasilitasi solusi jalan tengah.", s: 5}, {t: "Mengarahkan peserta untuk langsung melakukan pemungutan suara (voting) guna menentukan pilihan.", s: 4}, {t: "Menunda jalannya rapat hingga emosi para peserta mereda.", s: 2}, {t: "Mengambil keputusan secara sepihak untuk menghentikan perdebatan yang meluas.", s: 3}, {t: "Membiarkan perdebatan berlangsung sampai salah satu pihak mengalah secara alami.", s: 1}] },
+        { q: "Saat proses seleksi penerimaan bantuan program publik, Anda dihubungi pihak tertentu untuk meloloskan berkas pemohon yang kurang syarat. Tindakan Anda adalah...", opts: [{t: "Menolak permintaan tersebut secara tegas dan profesional sesuai ketentuan aturan hukum.", s: 5}, {t: "Menyerahkan berkas pemohon tersebut kepada bagian pengawasan untuk ditindaklanjuti.", s: 4}, {t: "Melaporkan indikasi intervensi ini kepada pimpinan panitia secara tertulis.", s: 3}, {t: "Mengikuti permintaan tersebut demi menghindari konflik dengan pihak terkait.", s: 1}, {t: "Meloloskan berkas dengan memberikan catatan khusus pemenuhan susulan.", s: 2}] },
+        { q: "Salah seorang staf bawahan Anda menunjukkan penurunan produktivitas kerja karena sedang menghadapi kendala pribadi. Tindakan Anda adalah...", opts: [{t: "Melakukan pendekatan empati pribadi, mendengarkan kendalanya, dan memberikan dorongan solutif.", s: 5}, {t: "Mengarahkan staf tersebut untuk berkonsultasi dengan layanan konseling dinas.", s: 4}, {t: "Memberikan peringatan agar tidak mencampuradukkan masalah pribadi dengan pekerjaan dinas.", s: 2}, {t: "Memberikan keringanan target beban kerja tanpa batas waktu yang jelas.", s: 3}, {t: "Membiarkannya hingga staf tersebut dapat mengatasi masalah pribadinya sendiri.", s: 1}] },
+        { q: "Anda mendapati adanya potensi celah keamanan kerentanan data elektronik pada portal resmi kantor. Tindakan proaktif Anda adalah...", opts: [{t: "Menyusun laporan rincian ancaman kerentanan dan menyerahkan rekomendasi perbaikan ke tim IT.", s: 5}, {t: "Menginformasikan temuan kerentanan tersebut kepada rekan kerja agar waspada.", s: 4}, {t: "Mencoba memperbaiki sendiri celah kerentanan tersebut tanpa koordinasi.", s: 3}, {t: "Mengamankan data-data pekerjaan pribadi terlebih dahulu.", s: 2}, {t: "Membiarkannya hingga ada pemberitahuan resmi dari pengelola siber.", s: 1}] },
+        { q: "Sebagai pejabat publik, bagaimana Anda menjaga independensi saat memiliki hubungan kekerabatan dengan rekan jurnalis media?", opts: [{t: "Tetap berhubungan baik secara profesional namun tegas menjaga batas rahasia kedinasan.", s: 5}, {t: "Berkonsultasi dengan unit humas setiap kali mengadakan pertemuan informal.", s: 4}, {t: "Menjauhi komunikasi dengan rekan jurnalis demi menghindari kecurigaan publik.", s: 2}, {t: "Memberikan informasi latar belakang terbatas demi menjaga hubungan baik.", s: 1}, {t: "Memanfaatkan hubungan kekerabatan untuk kepentingan publikasi positif pribadi.", s: 3}] },
+        { q: "Di tengah pelaksanaan tugas pelayanan lapangan, peralatan utama kerja mengalami kerusakan mendadak. Langkah pertama Anda adalah...", opts: [{t: "Tetap tenang, menggunakan opsi peralatan cadangan atau mekanisme manual agar pelayanan berjalan.", s: 5}, {t: "Melaporkan kerusakan pada teknisi dan menghentikan layanan sementara.", s: 3}, {t: "Menghubungi unit kerja terdekat untuk meminjam fasilitas peralatan kerja.", s: 4}, {t: "Menunggu instruksi atasan mengenai tindak lanjut penggunaan alat.", s: 2}, {t: "Menyalahkan bagian pemeliharaan atas kelalaian perawatan peralatan.", s: 1}] },
+        { q: "Anda ditugaskan menghadiri sosialisasi kebijakan baru yang tidak berkaitan langsung dengan bidang tugas harian Anda. Sikap Anda adalah...", opts: [{t: "Mengikuti kegiatan dengan tekun untuk menambah wawasan lintas fungsi organisasi.", s: 5}, {t: "Menghadiri acara dan aktif mengajukan pertanyaan relevansi kebijakan baru.", s: 4}, {t: "Hadir sekedar mengisi daftar hadir lalu melanjutkan pekerjaan kantor.", s: 2}, {t: "Meminta rekan kerja lain untuk menggantikan kehadiran Anda.", s: 1}, {t: "Mendengarkan materi sosialisasi seadanya tanpa membuat catatan ringkas.", s: 3}] },
+        { q: "Seorang rekan kerja sering mengunggah opini pribadi di media sosial yang menyudutkan kebijakan resmi tempat Anda bekerja. Sikap Anda adalah...", opts: [{t: "Menegurnya secara pribadi dan mengingatkan kode etik serta norma perilaku pegawai.", s: 5}, {t: "Melaporkan aktivitas media sosial rekan tersebut kepada komite etika instansi.", s: 4}, {t: "Membicarakan hal tersebut dengan rekan-rekan lain dalam kelompok kerja.", s: 3}, {t: "Mengabaikannya karena menganggap hal tersebut hak kebebasan berpendapat pribadi.", s: 2}, {t: "Memberikan komentar sanggahan secara terbuka pada unggahan media sosialnya.", s: 1}] },
+        { q: "Saat mengalokasikan anggaran program bakti publik yang terbatas, langkah optimasi yang Anda ambil adalah...", opts: [{t: "Menyusun perencanaan efisien, memprioritaskan kebutuhan vital, dan menggalang kolaborasi yang sah.", s: 5}, {t: "Mengajukan permohonan iuran sukarela dari internal anggota tim pelaksana.", s: 4}, {t: "Mengurangi target sasaran penerima manfaat program publik.", s: 3}, {t: "Mengajukan penambahan dana darurat kepada pimpinan tanpa merubah alokasi draf.", s: 2}, {t: "Melaksanakan kegiatan seadanya sesuai batas anggaran minimal yang tersedia.", s: 1}] },
+        { q: "Seorang pemohon izin mengajukan permohonan dengan satu dokumen pendukung yang belum memenuhi format standar. Tindakan Anda adalah...", opts: [{t: "Menjelaskan kekurangannya secara spesifik dan memberi petunjuk perbaikan agar cepat dilengkapi.", s: 5}, {t: "Berkonsultasi dengan pimpinan apakah dokumen tersebut dapat diberikan diskresi.", s: 4}, {t: "Menolak berkas permohonan tersebut dan memintanya mengulang proses dari awal.", s: 3}, {t: "Membiarkan berkas tersebut tertahan hingga pemohon menanyakan kembali.", s: 2}, {t: "Langsung meloloskan berkas tersebut demi mengedepankan kemudahan pemohon.", s: 1}] },
+        { q: "Saat bertugas melakukan verifikasi di lapangan, Anda mendapatkan ancaman verbal dari oknum warga agar menyetujui laporan tertentu. Sikap Anda adalah...", opts: [{t: "Tetap tenang, berpegang teguh pada aturan SOP, dan berkoordinasi dengan tim pengamanan lokasi.", s: 5}, {t: "Menghubungi pimpinan langsung untuk melaporkan hambatan ancaman di lapangan.", s: 4}, {t: "Menghentikan proses verifikasi dan segera meninggalkan lokasi pemeriksaan.", s: 2}, {t: "Merekam aksi ancaman tersebut sebagai bahan bukti pelaporan hukum.", s: 3}, {t: "Melayani perdebatan oknum tersebut agar tidak dianggap takut.", s: 1}] },
+        { q: "Berapa sering Anda melakukan refleksi dan evaluasi terhadap kualitas penyelesaian tugas kedinasan harian Anda?", opts: [{t: "Secara konsisten di akhir tugas untuk mengidentifikasi potensi perbaikan dan keakuratan kerja.", s: 5}, {t: "Melakukan evaluasi berkala bersama tim dalam sesi rapat internal mingguan.", s: 4}, {t: "Melakukan evaluasi jika ada waktu senggang di luar jam sibuk.", s: 3}, {t: "Melakukan evaluasi hanya apabila hasil kerja mendapat teguran dari atasan.", s: 2}, {t: "Jarang melakukan evaluasi karena menganggap pekerjaan sudah rutin sesuai standar.", s: 1}] },
+        { q: "Anda diminta membimbing pegawai baru yang belum memiliki pengalaman kerja di bidang pelayanan publik. Langkah Anda adalah...", opts: [{t: "Menyusun panduan bimbingan bertahap, memberikan arahan jelas, dan memantau perkembangannya.", s: 5}, {t: "Menyerahkan proses bimbingan pegawai baru kepada staf senior lainnya.", s: 4}, {t: "Meminta pegawai baru mempelajari alur kerja secara mandiri dengan mengamati sekitar.", s: 3}, {t: "Memberikan tugas-tugas ringan terlebih dahulu tanpa perlu penjelasan rinci.", s: 2}, {t: "Langsung memberikan tugas berat untuk menguji ketahanan dan kapasitas kerjanya.", s: 1}] },
+        { q: "Seorang anggota kelompok kerja Anda sering terlambat menyelesaikan bagian tugasnya sehingga menghambat laporan tim. Tindakan Anda adalah...", opts: [{t: "Mengajaknya berdiskusi secara personal, menanyakan kendala kerja, dan menegaskan komitmen tim.", s: 5}, {t: "Melaporkan perilaku keterlambatan tersebut kepada pejabat penilai kedisiplinan.", s: 4}, {t: "Membantu menyelesaikan bagian tugas anggota tersebut agar laporan tim tepat waktu.", s: 3}, {t: "Menyindir perilakunya saat forum rapat kelompok kerja berlangsung.", s: 2}, {t: "Membiarkannya karena masalah kedisiplinan merupakan tanggung jawab atasan.", s: 1}] },
+        { q: "Dalam menjaga prinsip Keterbukaan Informasi Publik (KIP), pandangan utama yang Anda pegang adalah...", opts: [{t: "Memberikan akses informasi publik secara transparan sesuai regulasi dengan tetap menjaga rahasia negara.", s: 5}, {t: "Mendorong penyelesaian setiap permohonan informasi melalui mekanisme kehumasan resmi.", s: 4}, {t: "Menyerahkan seluruh informasi yang diminta masyarakat demi asas keterbukaan.", s: 2}, {t: "Membatasi akses informasi publik untuk mencegah potensi penyalahgunaan data.", s: 1}, {t: "Menunggu putusan pengawasan sebelum membuka dokumen informasi publik.", s: 3}] },
+        { q: "Anda harus menyelesaikan analisis data yang memerlukan konsentrasi tinggi di lingkungan kerja yang bising. Cara Anda mengatasinya adalah...", opts: [{t: "Menjaga fokus, menyesuaikan diri dengan situasi, atau menggunakan ruang kerja yang lebih tenang.", s: 5}, {t: "Mencari ruangan lain yang kosong di area kantor untuk melanjutkan pengerjaan analisis.", s: 4}, {t: "Menunda pengerjaan tugas analisis sampai kondisi ruangan kembali tenang.", s: 3}, {t: "Menegur rekan-rekan yang membuat kebisingan dengan nada tegas.", s: 2}, {t: "Mengeluhkan kondisi ruang kerja kepada unit pengelola sarana prasarana.", s: 1}] },
+        { q: "Bagaimana tindakan Anda jika melihat rekan sekerja menggunakan fasilitas mobil dinas untuk keperluan mudik keluarga?", opts: [{t: "Mengingatkan secara baik-baik bahwa aset dinas dilarang dipergunakan untuk kepentingan pribadi.", s: 5}, {t: "Melaporkan indikasi penyalahgunaan aset tersebut kepada bagian pengawasan internal.", s: 4}, {t: "Menyindir perilaku rekan tersebut di dalam grup pertemanan kantor.", s: 3}, {t: "Membiarkannya karena menganggap hal itu merupakan tanggung jawab pribadinya.", s: 1}, {t: "Meminta izin untuk ikut memanfaatkan fasilitas tersebut jika ada kesempatan.", s: 2}] },
+        { q: "Saat memimpin kegiatan pelayanan luar kantor, terjadi cuaca buruk ekstrim yang mengganggu lokasi acara. Tindakan Anda adalah...", opts: [{t: "Mengutamakan keselamatan peserta dan tim, mengaktifkan rencana darurat, serta berkoordinasi dengan pihak terkait.", s: 5}, {t: "Menunggu petunjuk arahan dari komando pusat sebelum mengambil keputusan penundaan.", s: 4}, {t: "Membatalkan seluruh rangkaian kegiatan dan mengarahkan peserta kembali.", s: 3}, {t: "Meminta tim dan peserta berteduh sampai cuaca mereda tanpa kejelasan durasi.", s: 2}, {t: "Melanjutkan kegiatan pelayanan sesuai jadwal awal walau ada cuaca buruk.", s: 1}] },
+        { q: "Bagaimana cara Anda dalam menerapkan core values ASN (BerAKHLAK) dalam pelaksanaan tugas sehari-hari?", opts: [{t: "Menjadikan norma etika, integritas, dan aturan hukum sebagai pedoman utama dalam berorientasi pelayanan.", s: 5}, {t: "Berusaha konsisten antara perkataan dan perbuatan serta memberikan teladan kerja.", s: 4}, {t: "Menerapkan nilai-nilai BerAKHLAK terutama saat berada di lingkungan pelayanan publik.", s: 3}, {t: "Menerapkan nilai organisasi sejauh hal tersebut mendukung pencapaian karier.", s: 1}, {t: "Mengikuti contoh budaya kerja yang ditunjukkan oleh senior dan pimpinan.", s: 2}] },
+        { q: "Ketika proyek tim yang Anda pimpin meraih penghargaan tingkat nasional, sikap Anda adalah...", opts: [{t: "Menerima penghargaan dengan rendah hati dan menegaskan bahwa ini adalah hasil kerja keras seluruh tim.", s: 5}, {t: "Mengusulkan pembagian apresiasi bonus secara proporsional kepada seluruh anggota tim.", s: 4}, {t: "Menerima pujian tersebut sebagai bentuk pengakuan atas kapasitas kepemimpinan Anda.", s: 2}, {t: "Menolak penyerahan penghargaan karena merasa hasil proyek masih perlu disempurnakan.", s: 3}, {t: "Merayakan keberhasilan proyek bersama pejabat penanggung jawab kegiatan.", s: 1}] },
+        { q: "Anda menemukan hambatan pada metode analisis data laporan yang belum pernah ditemui sebelumnya. Langkah Anda adalah...", opts: [{t: "Mencari pedoman teknis terbaru, berkonsultasi dengan senior/ahli, dan memecahkannya secara analitis.", s: 5}, {t: "Mengikuti program pelatihan mandiri singkat terkait metode analisis data tersebut.", s: 4}, {t: "Mencoba spekulasi formulasi secara mandiri sampai laporan terlihat selesai.", s: 1}, {t: "Mengalihkan pengerjaan bagian yang rumit tersebut kepada rekan kerja yang lebih mahir.", s: 3}, {t: "Melaporkan kepada atasan bahwa analisis laporan tidak dapat dilanjutkan.", s: 2}] },
+        { q: "Seberapa jauh persiapan Anda sebelum melaksanakan tugas pengawasan ke wilayah perbatasan?", opts: [{t: "Mempelajari pemetaan kerawanan daerah, norma budaya warga lokal, serta kesiapan operasional.", s: 5}, {t: "Mendengarkan arahan briefing dari pimpinan sebelum keberangkatan ke wilayah perbatasan.", s: 4}, {t: "Mempersiapkan fisik dan kelengkapan perlengkapan standar dinas saja.", s: 3}, {t: "Langsung menuju lokasi penugasan dan mempelajari situasi secara fleksibel di lapangan.", s: 2}, {t: "Menyerahkan alur persiapan penugasan kepada koordinasi staf senior.", s: 1}] },
+        { q: "Jika Anda dihadapkan pada pilihan menyelesaikan antrian berkas warga atau menghadiri rapat dinas non-mendesak, sikap Anda adalah...", opts: [{t: "Mengutamakan pelayanan warga sambil berkoordinasi meminta izin rapat atau diwakilkan staf.", s: 5}, {t: "Melaporkan benturan agenda ini kepada pimpinan rapat untuk meminta keputusan petunjuk.", s: 4}, {t: "Membagi waktu dengan melayani sebagian warga lalu meninggalkan antrian untuk rapat.", s: 3}, {t: "Meninggalkan pelayanan antrian warga demi menghadiri rapat dinas tepat waktu.", s: 2}, {t: "Meminta warga datang kembali esok hari agar Anda fokus mengikuti rapat.", s: 1}] },
+        { q: "Bagaimana Anda merespon penataan ulang struktur organisasi kantor yang menempatkan Anda di bawah pimpinan baru yang berkarakter tegas kaku?", opts: [{t: "Menerima penataan struktur dengan profesional dan beradaptasi cepat dengan gaya kerja pimpinan baru.", s: 5}, {t: "Mencari tahu preferensi kerja pimpinan baru dari rekan sejawat untuk mengantisipasi miskomunikasi.", s: 4}, {t: "Meminta penyesuaian peran melalui bantuan staf senior sebagai jembatan komunikasi.", s: 3}, {t: "Menjalankan tugas seadanya tanpa banyak melakukan interaksi di luar arahan formal.", s: 2}, {t: "Mengajukan keberatan atas pemindahan unit kerja baru kepada bagian kepegawaian.", s: 1}] },
+        { q: "Anda menyaksikan tindakan perundungan verbal yang dilakukan seorang oknum pejabat terhadap staf junior. Sikap integritas Anda adalah...", opts: [{t: "Mendampingi staf junior untuk memberikan dukungan serta melaporkan dugaan pelanggaran etika ke pengawas.", s: 5}, {t: "Mengingatkan oknum pejabat secara pribadi di lain waktu agar menjaga norma etika kerja.", s: 4}, {t: "Menegur oknum pejabat tersebut secara langsung saat kejadian berlangsung.", s: 3}, {t: "Membicarakan kejadian tersebut dengan rekan kerja lain sebagai bahan pelajaran bersama.", s: 2}, {t: "Membiarkan kejadian tersebut karena tidak ingin terlibat perselisihan dengan pejabat.", s: 1}] },
+        { q: "Menurut Anda, apa komitmen nilai tertinggi yang harus dipegang teguh oleh seorang ASN / Pelayan Publik dalam bertugas?", opts: [{t: "Memberikan pengabdian terbaik demi kepentingan masyarakat, bangsa, dan negara berbasis aturan hukum.", s: 5}, {t: "Menjaga nama baik dan citra keharuman instansi tempat bertugas dari berbagai benturan negatif.", s: 4}, {t: "Menjalankan seluruh arahan instruksi pimpinan secara patuh demi menjaga komando organisasi.", s: 3}, {t: "Bekerja secara cermat untuk mencapai jenjang karier dan kepangkatan jabatan yang optimal.", s: 2}, {t: "Menjalankan tugas secara aman dan lancar demi kesejahteraan keluarga pribadi.", s: 1}] }
+    ];
+
+    let currentQ = 0;
+    let userAnswers = {};
+    let timerInterval;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        renderNav();
+        loadQ(0);
+        startTimer(60 * 60);
+    });
+
+    function loadQ(idx) {
+        currentQ = idx;
+        const qData = bankTKP[idx];
+        document.getElementById('q-no').innerText = `Soal ${idx + 1} dari 50`;
+        document.getElementById('q-text').innerText = qData.q;
+        
+        let html = '';
+        qData.opts.forEach((opt, i) => {
+            const isSelected = userAnswers[idx] === i ? 'selected' : '';
+            html += `<div class="opt ${isSelected}" onclick="selectOpt(${i})">${String.fromCharCode(65+i)}. ${opt.t}</div>`;
+        });
+        document.getElementById('options').innerHTML = html;
+        document.getElementById('btn-next').innerText = idx === bankTKP.length - 1 ? "Selesai" : "Selanjutnya";
+        renderNav();
+    }
+
+    function selectOpt(optIdx) {
+        userAnswers[currentQ] = optIdx;
+        loadQ(currentQ);
+        // Autonext diaktifkan kembali
+        setTimeout(() => { nextQ(); }, 250);
+    }
+
+    function renderNav() {
+        let html = '';
+        for(let i = 0; i < bankTKP.length; i++) {
+            let cls = 'nav-item';
+            if(userAnswers[i] !== undefined) cls += ' filled';
+            if(i === currentQ) cls += ' active';
+            html += `<div class="${cls}" onclick="loadQ(${i})">${i + 1}</div>`;
+        }
+        document.getElementById('navGrid').innerHTML = html;
+    }
+
+    function nextQ() {
+        if(currentQ === bankTKP.length - 1) {
+            if(confirm("Apakah Anda yakin ingin menyelesaikan Tes Kepribadian ini?")) finishTest();
+            return;
+        }
+        loadQ(currentQ + 1);
+    }
+
+    function prevQ() {
+        if(currentQ > 0) loadQ(currentQ - 1);
+    }
+
+    function startTimer(seconds) {
+        let t = seconds;
+        timerInterval = setInterval(() => {
+            let m = Math.floor(t / 60);
+            let s = t % 60;
+            document.getElementById('timer').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            if(--t < 0) {
+                clearInterval(timerInterval);
+                finishTest();
+            }
+        }, 1000);
+    }
+
+    function finishTest() {
+        clearInterval(timerInterval);
+        let totalSkor = 0;
+        let maxSkor = bankTKP.length * 5;
+        
+        bankTKP.forEach((q, i) => {
+            if(userAnswers[i] !== undefined) {
+                totalSkor += q.opts[userAnswers[i]].s;
+            }
+        });
+        
+        const nilai100 = Math.round((totalSkor / maxSkor) * 100);
+        localStorage.setItem('prc_nilai_kepribadian_2', nilai100);
+        alert(`Tes Kepribadian Selesai!\nSkor Anda: ${nilai100} / 100 (Total Poin: ${totalSkor})`);
+        window.location.href = 'index.html';
+    }
+</script>
+</body>
+</html>

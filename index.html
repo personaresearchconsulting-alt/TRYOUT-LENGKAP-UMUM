@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi CAT Series 2 - Persona Research & Consulting</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0b2340',
+                        gold: '#d4a017',
+                        navyDark: '#071629',
+                        goldHover: '#b58710',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800 flex flex-col justify-between relative">
+
+    <!-- MAIN HEADER -->
+    <header class="bg-navy text-white shadow-lg border-b-4 border-gold sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto px-4 py-4 sm:py-5 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="text-center sm:text-left">
+                <h1 class="text-xl sm:text-2xl font-bold tracking-wide flex items-center justify-center sm:justify-start gap-2">
+                    <i class="fa-solid font-bold fa-shield-halved text-gold"></i>
+                    PERSONA RESEARCH & CONSULTING
+                </h1>
+                <p class="text-xs sm:text-sm text-gold font-semibold tracking-wider mt-0.5">
+                    SERIES 2 - SIMULASI CAT SELEKSI POLRI
+                </p>
+            </div>
+            <!-- Logout / Lock indicator -->
+            <div id="authStatus" class="hidden flex items-center gap-2 bg-navyDark/60 px-3 py-1.5 rounded-full border border-gold/30 text-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-slate-300">Sesi Terverifikasi</span>
+                <button type="button" onclick="logout()" class="ml-2 text-rose-400 hover:text-rose-300 transition cursor-pointer" title="Keluar / Kunci">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main id="mainPortal" class="hidden max-w-5xl mx-auto px-4 py-8 w-full flex-grow">
+        
+        <!-- USER IDENTITY CARD -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 mb-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-2 h-full bg-gold"></div>
+            <div class="max-w-md mx-auto">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-navy/5 text-navy text-xs font-bold uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-id-card text-gold"></i> Identitas Peserta Ujian
+                </span>
+                <h2 class="text-xl font-bold text-navy mb-1">DATA DIRI PESERTA</h2>
+                <p class="text-xs text-slate-500 mb-4">Pastikan nama lengkap terisi dengan benar sebelum memulai urutan tes.</p>
+                
+                <div class="relative">
+                    <input type="text" id="inputNama" placeholder="Ketik Nama Lengkap Peserta..." oninput="saveName()"
+                           class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-center text-slate-800 font-semibold focus:bg-white focus:border-navy focus:ring-2 focus:ring-navy/20 outline-none transition placeholder:font-normal">
+                    <div class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEST MODULES GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            
+            <!-- 1. TES KECERDASAN -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between relative group overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1.5 bg-navy group-hover:bg-gold transition-colors duration-300"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-navy font-bold text-lg">
+                            1
+                        </div>
+                        <i class="fa-solid fa-brain text-slate-300 text-2xl group-hover:text-gold transition-colors"></i>
+                    </div>
+                    <h3 class="font-bold text-navy text-lg mb-1">TES KECERDASAN</h3>
+                    <p class="text-xs text-slate-500 mb-4 leading-relaxed">50 Soal HOTS (Penalaran Analitis, Numerik, Verbal, & Spasial).</p>
+                </div>
+                
+                <div>
+                    <div id="statusKecerdasan" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 mb-4 inline-flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-slate-400"></span> Belum Dikerjakan
+                    </div>
+                    <button type="button" onclick="openModule('kecerdasan_2_to.html')" class="w-full bg-navy hover:bg-navyDark text-white font-bold py-3 px-4 rounded-xl text-center transition text-xs tracking-wider uppercase shadow hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+                        <span>MULAI KECERDASAN</span>
+                        <i class="fa-solid fa-chevron-right text-gold"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. TES KEPRIBADIAN (TKP) -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between relative group overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1.5 bg-navy group-hover:bg-gold transition-colors duration-300"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-navy font-bold text-lg">
+                            2
+                        </div>
+                        <i class="fa-solid fa-user-shield text-slate-300 text-2xl group-hover:text-gold transition-colors"></i>
+                    </div>
+                    <h3 class="font-bold text-navy text-lg mb-1">TES KEPRIBADIAN (TKP)</h3>
+                    <p class="text-xs text-slate-500 mb-4 leading-relaxed">50 Soal HOTS Studi Kasus Integritas & Kepemimpinan.</p>
+                </div>
+                
+                <div>
+                    <div id="statusKepribadian" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 mb-4 inline-flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-slate-400"></span> Belum Dikerjakan
+                    </div>
+                    <button type="button" onclick="openModule('kepribadian_2_to.html')" class="w-full bg-navy hover:bg-navyDark text-white font-bold py-3 px-4 rounded-xl text-center transition text-xs tracking-wider uppercase shadow hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+                        <span>MULAI KEPRIBADIAN</span>
+                        <i class="fa-solid fa-chevron-right text-gold"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. TES KECERMATAN -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between relative group overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1.5 bg-navy group-hover:bg-gold transition-colors duration-300"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-navy font-bold text-lg">
+                            3
+                        </div>
+                        <i class="fa-solid fa-stopwatch text-slate-300 text-2xl group-hover:text-gold transition-colors"></i>
+                    </div>
+                    <h3 class="font-bold text-navy text-lg mb-1">TES KECERMATAN</h3>
+                    <p class="text-xs text-slate-500 mb-4 leading-relaxed">10 Kolom Simbol Khusus (Sensitivitas Visual & Konsistensi).</p>
+                </div>
+                
+                <div>
+                    <div id="statusKecermatan" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 mb-4 inline-flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-slate-400"></span> Belum Dikerjakan
+                    </div>
+                    <button type="button" onclick="openModule('kecermatan_2_to.html')" class="w-full bg-navy hover:bg-navyDark text-white font-bold py-3 px-4 rounded-xl text-center transition text-xs tracking-wider uppercase shadow hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+                        <span>MULAI KECERMATAN</span>
+                        <i class="fa-solid fa-chevron-right text-gold"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RECAP & RESET SECTION -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm text-center">
+            <div class="mb-4">
+                <div id="statusNilaiAkhir" class="text-sm font-semibold text-slate-500 bg-slate-100 inline-block px-4 py-2 rounded-xl">
+                    Nilai akhir belum lengkap
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
+                <button type="button" onclick="openModule('rekap_nilai_akhir_2.html')" class="w-full sm:w-auto flex-1 bg-gold hover:bg-goldHover text-navy font-extrabold py-3.5 px-6 rounded-xl shadow-md transition duration-200 flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer">
+                    <i class="fa-solid fa-chart-column text-lg"></i>
+                    <span>LIHAT REKAP NILAI AKHIR</span>
+                </button>
+                
+                <button type="button" onclick="showResetModal()" class="w-full sm:w-auto bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-3.5 px-6 rounded-xl border border-rose-200 transition duration-200 flex items-center justify-center gap-2 text-sm cursor-pointer">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>RESET DATA</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p>&copy; 2026 <strong>Persona Research & Consulting</strong>. All rights reserved.</p>
+            <div class="flex items-center gap-4 text-slate-400">
+                <span><i class="fa-solid fa-shield-halved"></i> CAT System v2.0</span>
+                <span>&bull;</span>
+                <span><i class="fa-solid fa-lock"></i> Secured Access</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS & OVERLAYS CONTAINER -->
+    
+    <!-- 1. LOGIN SCREEN MODAL (z-50) -->
+    <div id="loginScreen" class="fixed inset-0 z-50 bg-navy/95 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-100 overflow-hidden">
+            <div class="bg-navy p-6 text-center border-b-2 border-gold relative">
+                <div class="w-16 h-16 bg-navyDark border-2 border-gold rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+                    <i class="fa-solid fa-lock text-gold text-2xl"></i>
+                </div>
+                <h2 class="text-white text-xl font-bold">AUTENTIKASI PESERTA</h2>
+                <p class="text-slate-300 text-xs mt-1">Masukkan kata sandi akses untuk membuka portal ujian</p>
+            </div>
+            
+            <div class="p-6">
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label for="inputPassword" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Kata Sandi Akses</label>
+                        <div class="relative">
+                            <input type="password" id="inputPassword" placeholder="Masukkan password..." 
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none text-center text-lg tracking-widest transition">
+                            <button type="button" onclick="togglePassVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                                <i id="eyeIcon" class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="loginError" class="hidden bg-rose-50 border border-rose-200 text-rose-600 px-4 py-2.5 rounded-xl text-xs font-medium text-center flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation text-sm"></i>
+                        <span>Kata sandi tidak valid! Silakan coba lagi.</span>
+                    </div>
+
+                    <button type="submit" class="w-full bg-navy hover:bg-navyDark text-gold font-bold py-3.5 px-4 rounded-xl shadow-md transition duration-200 flex items-center justify-center gap-2 group text-sm tracking-wide cursor-pointer">
+                        <span>MASUK PORTAL</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center text-xs text-slate-400">
+                    <p>Persona Research & Consulting &copy; 2026</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. EXPIRED SCREEN MODAL (z-50) -->
+    <div id="expiredScreen" class="hidden fixed inset-0 z-50 bg-navy/95 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-100 overflow-hidden text-center p-8">
+            <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-rose-200">
+                <i class="fa-solid fa-circle-exclamation text-3xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-navy mb-2">AKSES KEDALUWARSA</h2>
+            <p class="text-sm text-slate-600 leading-relaxed mb-6">Masa berlaku sistem simulasi ini telah berakhir. Silakan hubungi administrator untuk memperbarui akses portal.</p>
+            <div class="text-xs text-slate-400 border-t border-slate-100 pt-4">
+                Persona Research & Consulting &copy; 2026
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. CONFIRM RESET MODAL (z-50) -->
+    <div id="resetModal" class="hidden fixed inset-0 z-50 bg-navy/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl border border-slate-100">
+            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Konfirmasi Reset</h3>
+            <p class="text-xs text-slate-500 mb-6 leading-relaxed">Yakin ingin menghapus seluruh data TRYOUT SERIES 2 dan mulai dari nol? Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="flex gap-3">
+                <button type="button" onclick="closeResetModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl font-bold text-xs cursor-pointer">BATAL</button>
+                <button type="button" onclick="confirmResetSeries2()" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md cursor-pointer">YA, RESET</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ALERT TOAST (z-50) -->
+    <div id="toastNotification" class="hidden fixed top-20 right-4 z-50 bg-rose-600 text-white px-5 py-3 rounded-xl shadow-2xl border border-rose-400 flex items-center gap-3 transition-all duration-300">
+        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+        <div>
+            <h4 class="font-bold text-xs uppercase tracking-wider text-rose-100">Peringatan</h4>
+            <p id="toastMessage" class="text-sm font-medium">Harap isi Nama Lengkap terlebih dahulu sebelum memulai tes!</p>
+        </div>
+        <button type="button" onclick="closeToast()" class="ml-auto text-rose-200 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+<script>
+    const PASS_KEY = "persona05";
+    const AUTH_SESSION_KEY = "prc_series2_authenticated";
+    
+    // Kedaluwarsa diatur ke 31 Desember 2027
+    const EXPIRATION_TIMESTAMP = new Date(2027, 11, 31, 23, 59, 59).getTime();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!checkExpiration()) {
+            checkAuthStatus();
+            
+            const savedName = localStorage.getItem('prc_nama_peserta');
+            if (savedName) {
+                document.getElementById('inputNama').value = savedName;
+            }
+
+            loadScoresAndStatuses();
+        }
+    });
+
+    function checkExpiration() {
+        const now = Date.now();
+        if (now > EXPIRATION_TIMESTAMP) {
+            document.getElementById('expiredScreen').classList.remove('hidden');
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainPortal').classList.add('hidden');
+            document.getElementById('authStatus').classList.add('hidden');
+            return true;
+        }
+        return false;
+    }
+
+    function togglePassVisibility() {
+        const passInput = document.getElementById('inputPassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        if (passInput.type === 'password') {
+            passInput.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passInput.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+
+    function checkAuthStatus() {
+        const isAuth = sessionStorage.getItem(AUTH_SESSION_KEY);
+        const loginScreen = document.getElementById('loginScreen');
+        const mainPortal = document.getElementById('mainPortal');
+        const authStatus = document.getElementById('authStatus');
+
+        if (isAuth === 'true') {
+            loginScreen.classList.add('hidden');
+            mainPortal.classList.remove('hidden');
+            authStatus.classList.remove('hidden');
+        } else {
+            loginScreen.classList.remove('hidden');
+            mainPortal.classList.add('hidden');
+            authStatus.classList.add('hidden');
+        }
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        if (checkExpiration()) return;
+
+        const inputVal = document.getElementById('inputPassword').value.trim();
+        const errorBox = document.getElementById('loginError');
+
+        if (inputVal === PASS_KEY) {
+            errorBox.classList.add('hidden');
+            sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+            checkAuthStatus();
+        } else {
+            errorBox.classList.remove('hidden');
+            document.getElementById('inputPassword').value = '';
+            document.getElementById('inputPassword').focus();
+        }
+    }
+
+    function logout() {
+        sessionStorage.removeItem(AUTH_SESSION_KEY);
+        checkAuthStatus();
+    }
+
+    function saveName() {
+        const val = document.getElementById('inputNama').value.trim();
+        localStorage.setItem('prc_nama_peserta', val);
+    }
+
+    function openModule(targetUrl) {
+        if (checkExpiration()) return;
+
+        if (sessionStorage.getItem(AUTH_SESSION_KEY) !== 'true') {
+            checkAuthStatus();
+            return;
+        }
+
+        const nama = document.getElementById('inputNama').value.trim();
+        if (!nama) {
+            showToast("Harap isi Nama Lengkap terlebih dahulu sebelum memulai tes!");
+            document.getElementById('inputNama').focus();
+            return;
+        }
+
+        window.location.href = targetUrl;
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toastNotification');
+        const toastMsg = document.getElementById('toastMessage');
+        toastMsg.textContent = msg;
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+            closeToast();
+        }, 4000);
+    }
+
+    function closeToast() {
+        document.getElementById('toastNotification').classList.add('hidden');
+    }
+
+    function loadScoresAndStatuses() {
+        // 1. Ambil data mentah dari LocalStorage
+        const rawNk = localStorage.getItem('prc_nilai_kecerdasan_2');
+        const rawNp = localStorage.getItem('prc_nilai_kepribadian_2');
+        const rawNc = localStorage.getItem('prc_nilai_kecermatan_2');
+
+        // 2. Validasi & konversi ke angka
+        const nk = (rawNk !== null && !isNaN(parseFloat(rawNk))) ? parseFloat(rawNk) : null;
+        const np = (rawNp !== null && !isNaN(parseFloat(rawNp))) ? parseFloat(rawNp) : null;
+        const nc = (rawNc !== null && !isNaN(parseFloat(rawNc))) ? parseFloat(rawNc) : null;
+
+        // 3. Update tampilan status tiap modul
+        if (nk !== null) {
+            const el = document.getElementById('statusKecerdasan');
+            if (el) {
+                el.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Selesai (Skor: ${nk})`;
+                el.className = "text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 mb-4 inline-flex items-center gap-1.5";
+            }
+        }
+
+        if (np !== null) {
+            const el = document.getElementById('statusKepribadian');
+            if (el) {
+                el.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Selesai (Skor: ${np})`;
+                el.className = "text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 mb-4 inline-flex items-center gap-1.5";
+            }
+        }
+
+        if (nc !== null) {
+            const el = document.getElementById('statusKecermatan');
+            if (el) {
+                el.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Selesai (Skor: ${nc})`;
+                el.className = "text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 mb-4 inline-flex items-center gap-1.5";
+            }
+        }
+
+        // 4. Hitung & Rekap Nilai Akhir (30% Kecerdasan + 30% Kepribadian + 40% Kecermatan)
+        const statusAkhir = document.getElementById('statusNilaiAkhir');
+        if (!statusAkhir) return;
+
+        if (nk !== null && np !== null && nc !== null) {
+            const nilaiAkhir = (nk * 0.30) + (np * 0.30) + (nc * 0.40);
+            
+            // Simpan nilai akhir hasil akumulasi ke LocalStorage
+            localStorage.setItem('prc_nilai_akhir_2', nilaiAkhir.toFixed(2));
+
+            statusAkhir.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i> Nilai Akhir Terhitung: <strong class="text-emerald-700 text-base ml-1">${nilaiAkhir.toFixed(2)}</strong>`;
+            statusAkhir.className = "text-sm font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 inline-block px-5 py-2.5 rounded-xl shadow-sm";
+        } else {
+            // Tampilkan info berapa tes yang sudah/belum selesai
+            const doneCount = [nk, np, nc].filter(v => v !== null).length;
+            statusAkhir.innerHTML = `<i class="fa-solid fa-clock text-amber-500 mr-1.5"></i> Progres Tes: <strong>${doneCount}/3 Selesai</strong> (Selesaikan 3 tes untuk melihat Nilai Akhir)`;
+            statusAkhir.className = "text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 inline-block px-4 py-2 rounded-xl";
+        }
+    }
+
+    function showResetModal() {
+        document.getElementById('resetModal').classList.remove('hidden');
+    }
+
+    function closeResetModal() {
+        document.getElementById('resetModal').classList.add('hidden');
+    }
+
+    function confirmResetSeries2() {
+        [
+            'prc_nama_peserta',
+            'prc_nilai_kecerdasan_2',
+            'prc_nilai_kepribadian_2',
+            'prc_nilai_kecermatan_2',
+            'prc_nilai_akhir_2',
+            'prc_review_kecerdasan_2_answers',
+            'prc_review_kepribadian_2_answers',
+            'prc_review_kecermatan_2'
+        ].forEach(k => localStorage.removeItem(k));
+
+        window.location.reload();
+    }
+</script>
+</body>
+</html>

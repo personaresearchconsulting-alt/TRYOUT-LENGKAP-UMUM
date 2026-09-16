@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Kecerdasan - 50 Soal Utuh</title>
+    <style>
+        :root { --navy: #0b2340; --gold: #d4a017; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #1e293b; -webkit-user-select: none; user-select: none; }
+        header { background: var(--navy); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--gold); }
+        .container { max-width: 950px; margin: 20px auto; padding: 0 15px; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .opt { padding: 14px; margin: 8px 0; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .opt:hover { background: #f1f5f9; border-color: var(--navy); }
+        .opt.selected { background: #e0f2fe; border-color: var(--navy); font-weight: bold; }
+        .nav-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin-top: 15px; }
+        .nav-item { height: 35px; display: flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .nav-item.filled { background: var(--navy); color: white; }
+        .nav-item.active { border: 2px solid var(--gold); }
+        .btn { background: var(--navy); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        #timer { font-size: 20px; font-weight: bold; color: var(--gold); font-family: monospace; }
+    </style>
+</head>
+<body oncontextmenu="return false">
+
+<div class="container">
+    <header>
+        <div><b>PAKET TES KECERDASAN</b> | 50 SOAL UTUH</div>
+        <div id="timer">60:00</div>
+    </header>
+
+    <div style="display:flex; gap:20px; margin-top:20px;">
+        <div style="flex:3;">
+            <div class="card">
+                <div id="q-no" style="font-weight:bold; color:var(--navy); margin-bottom:10px;">Soal 1 dari 50</div>
+                <div id="q-text" style="font-size:15px; line-height:1.6; margin-bottom:20px;"></div>
+                <div id="options"></div>
+                <div style="margin-top:25px; display:flex; justify-content:space-between;">
+                    <button class="btn" onclick="prevQ()" style="background:#64748b">Sebelumnya</button>
+                    <button class="btn" id="btn-next" onclick="nextQ()">Selanjutnya</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="flex:1;">
+            <div class="card" style="padding:15px;">
+                <div style="text-align:center; font-size:12px; font-weight:bold; margin-bottom:10px;">NAVIGASI SOAL</div>
+                <div id="navGrid" class="nav-grid"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const bankKecerdasan = [
+        { q: "DEVALUASI : MATA UANG = ... : ...", opts: ["Inflasi : Pasar", "Apresiasi : Properti", "Atrofi : Otot", "Degradasi : Gelar", "Korupsi : Jabatan"], ans: 2 },
+        { q: "Semua analis data menguasai Python. Sebagian peneliti juga menguasai Python. Semua orang yang menguasai Python mampu mengolah big data. Kesimpulan yang tepat adalah...", opts: ["Sebagian peneliti mampu mengolah big data", "Semua peneliti menguasai Python dan mampu mengolah big data", "Analis data yang tidak menguasai Python tidak mampu mengolah big data", "Semua pengolah big data pasti seorang analis data", "Sebagian analis data tidak mampu mengolah big data"], ans: 0 },
+        { q: "Seri angka: 3, 5, 9, 17, 33, 65, ... Angka selanjutnya adalah...", opts: ["127", "129", "131", "128", "130"], ans: 1 },
+        { q: "Jika harga minyak naik, maka biaya transportasi meningkat. Jika biaya transportasi meningkat, maka harga bahan pokok naik. Saat ini harga bahan pokok tidak naik. Kesimpulan yang sah adalah...", opts: ["Harga minyak tidak naik", "Biaya transportasi meningkat", "Harga minyak naik tetapi biaya transportasi tidak naik", "Harga bahan pokok stabil karena subsidi", "Tidak dapat ditarik kesimpulan"], ans: 0 },
+        { q: "ALGORITMA : PEMROGRAMAN = PROSEDUR : ...", opts: ["Keputusan", "Operasional", "Kebijakan", "Evaluasi", "Implementasi"], ans: 1 },
+        { q: "Seri huruf: C, F, J, O, U, ... Huruf berikutnya adalah...", opts: ["X", "Y", "Z", "A", "B"], ans: 1 },
+        { q: "Tidak ada diplomat yang bertindak impulsif. Semua negosiatok ulung adalah diplomat. Kesimpulan yang benar adalah...", opts: ["Semua negosiator ulung tidak bertindak impulsif", "Sebagian negosiator ulung bertindak impulsif", "Semua yang tidak bertindak impulsif adalah diplomat", "Sebagian diplomat adalah negosiator impulsif", "Diplomat tidak pernah menjadi negosiator ulung"], ans: 0 },
+        { q: "SKEPTIS : RAGU = OPTIMIS : ...", opts: ["Berani", "Yakin", "Harapan", "Waspada", "Sukses"], ans: 1 },
+        { q: "Seri angka: 2, 3, 6, 15, 42, ... Angka berikutnya adalah...", opts: ["123", "120", "121", "124", "125"], ans: 0 },
+        { q: "Sinonim kata DISPARITAS :", opts: ["Persamaan", "Perbedaan", "Penyimpangan", "Pemisahan", "Pembauran"], ans: 1 },
+        { q: "Antonim kata TANGSI :", opts: ["Asrama", "Barak", "Penjara", "Rumah hunian bebas", "Benteng"], ans: 3 },
+        { q: "Semua peserta pelatihan manajerial membawa laptop. Sebagian peserta pelatihan manajerial mengenakan kemeja putih. Kesimpulan yang tepat...", opts: ["Semua peserta berkemeja putih membawa laptop", "Sebagian peserta pelatihan manajerial mengenakan kemeja putih dan membawa laptop", "Semua yang membawa laptop berkemeja putih", "Sebagian peserta tidak membawa laptop", "Peserta yang tidak berkemeja putih pasti tidak membawa laptop"], ans: 1 },
+        { q: "Seri angka: 100, 96, 88, 72, 40, ... Angka berikutnya adalah...", opts: ["-24", "0", "8", "-12", "-16"], ans: 0 },
+        { q: "BANDARA : NAVIGASI = PASAR SAHAM : ...", opts: ["Reksadana", "Analisis teknikal", "Investasi", "Pialang", "Obligasi"], ans: 1 },
+        { q: "Sebuah proyek dikerjakan 12 orang dan selesai dalam 20 hari. Jika pekerja ditambah 3 orang, berapa hari proyek tersebut akan selesai?", opts: ["15 hari", "16 hari", "17 hari", "18 hari", "14 hari"], ans: 1 },
+        { q: "Seri huruf: A, C, F, J, O, ... Huruf selanjutnya adalah...", opts: ["T", "U", "V", "S", "W"], ans: 1 },
+        { q: "Semua kendaraan listrik hemat energi. Sebagian kendaraan hemat energi bebas emisi karbon. Kesimpulan yang paling tepat adalah...", opts: ["Semua kendaraan listrik bebas emisi karbon", "Sebagian kendaraan listrik bebas emisi karbon", "Semua kendaraan bebas emisi karbon adalah kendaraan listrik", "Sebagian kendaraan hemat energi tidak menggunakan listrik", "Tidak ada kendaraan listrik yang emisi karbon"], ans: 1 },
+        { q: "MIKROSKOP : OBSERVASIONAL = TELESKOP : ...", opts: ["Naskah", "Astronomis", "Lensa", "Antariksa", "Laboratorium"], ans: 1 },
+        { q: "Seri angka: 4, 9, 19, 39, 79, ... Angka berikutnya adalah...", opts: ["159", "158", "160", "157", "161"], ans: 0 },
+        { q: "Jika P > Q, Q = R, dan S < R, maka hubungan yang tepat antara P dan S adalah...", opts: ["P < S", "P = S", "P > S", "P ≤ S", "Hubungan tidak dapat ditentukan"], ans: 2 },
+        { q: "REAKTOR : ENERGI = JANTUNG : ...", opts: ["Darah", "Sirkulasi", "Oksigen", "Denyut", "Kardiologi"], ans: 1 },
+        { q: "Sinonim kata KELASIFIKASI :", opts: ["Pengelompokan", "Pemisahan", "Urutan", "Penggabungan", "Penyaringan"], ans: 0 },
+        { q: "Antonim kata PROSIT :", opts: ["Bencana", "Keuntungan", "Manfaat", "Hasil", "Laba"], ans: 0 },
+        { q: "Seri huruf: Z, W, S, N, ... Huruf berikutnya adalah...", opts: ["G", "H", "I", "F", "J"], ans: 0 },
+        { q: "Semua ahli strategi memprediksi risiko. Pak Budi memprediksi risiko setiap mengambil keputusan. Kesimpulan:", opts: ["Pak Budi adalah ahli strategi", "Pak Budi belum tentu seorang ahli strategi", "Pak Budi bukan ahli strategi", "Semua yang memprediksi risiko tidak pernah gagal", "Ahli strategi selalu sukses"], ans: 1 },
+        { q: "Jika nilai x = 4 dan y = 3, maka nilai dari (x^3 - y^3) / (x - y) adalah...", opts: ["37", "25", "13", "49", "31"], ans: 0 },
+        { q: "ISOLASI : STERIL = KANTOR : ...", opts: ["Karyawan", "Produktif", "Meja", "Gedung", "Aturan"], ans: 1 },
+        { q: "Seri angka: 1, 8, 27, 64, 125, ... Angka berikutnya adalah...", opts: ["216", "225", "256", "343", "196"], ans: 0 },
+        { q: "Jika sistem keamanan diperbarui, maka risiko kebocoran data berkurang. Saat ini risiko kebocoran data tidak berkurang. Kesimpulan:", opts: ["Sistem keamanan telah diperbarui", "Sistem keamanan tidak diperbarui", "Kebocoran data telah terjadi", "Sistem keamanan rusak", "Terjadi peretasan"], ans: 1 },
+        { q: "Sinonim kata AMBIGUITAS :", opts: ["Ketegasan", "Ketidakjelasan", "Keraguan", "Penyimpangan", "Kekeliruan"], ans: 1 },
+        { q: "Seri angka: 3, 4, 7, 11, 18, 29, ... Angka berikutnya adalah...", opts: ["47", "40", "43", "45", "48"], ans: 0 },
+        { q: "EKOSISTEM : BIOMA = PARAGRAF : ...", opts: ["Kalimat", "Wacana", "Kata", "Buku", "Bab"], ans: 1 },
+        { q: "Antonim kata HETEROGEN :", opts: ["Variatif", "Kompleks", "Homogen", "Seragam", "Satu jenis"], ans: 2 },
+        { q: "Hasil perhitungan dari 125% dari 0,64 adalah...", opts: ["0,80", "0,75", "0,85", "0,70", "0,90"], ans: 0 },
+        { q: "Semua akuntan publik lulus ujian sertifikasi. Dini tidak lulus ujian sertifikasi. Kesimpulan:", opts: ["Dini seorang akuntan publik senior", "Dini bukan seorang akuntan publik", "Dini akuntan internal", "Dini akan mengulang ujian", "Dini belum menyerahkan berkas"], ans: 1 },
+        { q: "Seri huruf: B, E, H, K, N, ... Huruf berikutnya adalah...", opts: ["P", "Q", "R", "O", "S"], ans: 1 },
+        { q: "INVESTASI : DEPRESIASI = TABUNGAN : ...", opts: ["Bunga", "Inflatabel", "Inflasi", "Setoran", "Tarik tunai"], ans: 2 },
+        { q: "Jika 4x + 2y = 20 dan 2x + y = 10, berapa nilai dari x - y jika x = 3?", opts: ["-1", "1", "2", "-2", "0"], ans: -1 },
+        { q: "Sinonim kata ANOMALI :", opts: ["Keanehan", "Ketertiban", "Kebiasaan", "Pola", "Kemiripan"], ans: 0 },
+        { q: "Seri angka: 243, 81, 27, 9, ... Angka berikutnya adalah...", opts: ["3", "1", "0", "1/3", "1/9"], ans: 0 },
+        { q: "Semua insinyur mengerti gambar teknik. Rian mengerti gambar teknik. Kesimpulan:", opts: ["Rian pasti seorang insinyur", "Rian belum tentu seorang insinyur", "Rian bukan insinyur", "Semua yang mengerti gambar teknik adalah insinyur", "Rian insinyur sipil"], ans: 1 },
+        { q: "SATELIT : ORBIT = KAPAL LAUT : ...", opts: ["Pelabuhan", "Alur pelayaran", "Dermaga", "Jalur udara", "Samudra"], ans: 1 },
+        { q: "Antonim kata ESKALASI :", opts: ["Peningkatan", "Penurunan", "Peluasan", "Penguatan", "Stagnasi"], ans: 1 },
+        { q: "Suatu pekerjaan dapat diselesaikan dalam waktu 15 jam oleh 4 orang. Jika ingin diselesaikan dalam waktu 5 jam, berapa tambahan pekerja yang dibutuhkan?", opts: ["12 orang", "8 orang", "10 orang", "6 orang", "7 orang"], ans: 1 },
+        { q: "Seri huruf: A, B, D, G, K, ... Huruf berikutnya adalah...", opts: ["O", "P", "Q", "N", "R"], ans: 1 },
+        { q: "Semua produk berstandar resmi aman digunakan. Produk X telah lulus uji standar resmi. Kesimpulan:", opts: ["Produk X mahal", "Produk X aman digunakan", "Produk X tidak akan rusak", "Produk X impor", "Produk X paling baik"], ans: 1 },
+        { q: "INNOVASI : DIVERSIFIKASI = RISET : ...", opts: ["Publikasi", "Eksperimen", "Komersialisasi", "Hipotesis", "Penemuan"], ans: 4 },
+        { q: "Hasil dari √(169) - √(81) + √(144) adalah...", opts: ["16", "18", "20", "14", "15"], ans: 0 },
+        { q: "Sinonim kata PRAGMATIS :", opts: ["Praktis", "Teoretis", "Idealistis", "Kritis", "Abstrak"], ans: 0 },
+        { q: "Seri angka: 5, 7, 11, 19, 35, ... Angka berikutnya adalah...", opts: ["67", "65", "63", "69", "71"], ans: 0 }
+    ];
+
+    let currentQ = 0;
+    let userAnswers = {};
+    let timerInterval;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        renderNav();
+        loadQ(0);
+        startTimer(60 * 60);
+    });
+
+    function loadQ(idx) {
+        currentQ = idx;
+        const qData = bankKecerdasan[idx];
+        document.getElementById('q-no').innerText = `Soal ${idx + 1} dari 50`;
+        document.getElementById('q-text').innerText = qData.q;
+        
+        let html = '';
+        qData.opts.forEach((opt, i) => {
+            const isSelected = userAnswers[idx] === i ? 'selected' : '';
+            html += `<div class="opt ${isSelected}" onclick="selectOpt(${i})">${String.fromCharCode(65+i)}. ${opt}</div>`;
+        });
+        document.getElementById('options').innerHTML = html;
+        document.getElementById('btn-next').innerText = idx === bankKecerdasan.length - 1 ? "Selesai" : "Selanjutnya";
+        renderNav();
+    }
+
+    function selectOpt(optIdx) {
+        userAnswers[currentQ] = optIdx;
+        loadQ(currentQ);
+        // Autonext diaktifkan kembali
+        setTimeout(() => { nextQ(); }, 250);
+    }
+
+    function renderNav() {
+        let html = '';
+        for(let i = 0; i < bankKecerdasan.length; i++) {
+            let cls = 'nav-item';
+            if(userAnswers[i] !== undefined) cls += ' filled';
+            if(i === currentQ) cls += ' active';
+            html += `<div class="${cls}" onclick="loadQ(${i})">${i + 1}</div>`;
+        }
+        document.getElementById('navGrid').innerHTML = html;
+    }
+
+    function nextQ() {
+        if(currentQ === bankKecerdasan.length - 1) {
+            if(confirm("Apakah Anda yakin ingin menyelesaikan Tes Kecerdasan ini?")) finishTest();
+            return;
+        }
+        loadQ(currentQ + 1);
+    }
+
+    function prevQ() {
+        if(currentQ > 0) loadQ(currentQ - 1);
+    }
+
+    function startTimer(seconds) {
+        let t = seconds;
+        timerInterval = setInterval(() => {
+            let m = Math.floor(t / 60);
+            let s = t % 60;
+            document.getElementById('timer').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            if(--t < 0) {
+                clearInterval(timerInterval);
+                finishTest();
+            }
+        }, 1000);
+    }
+
+    function finishTest() {
+        clearInterval(timerInterval);
+        let benar = 0;
+        
+        bankKecerdasan.forEach((q, i) => {
+            if(userAnswers[i] === q.ans) {
+                benar++;
+            }
+        });
+        
+        const nilai100 = Math.round((benar / bankKecerdasan.length) * 100);
+        localStorage.setItem('prc_nilai_kecerdasan_2', nilai100);
+        alert(`Tes Kecerdasan Selesai!\nSkor Anda: ${nilai100} / 100 (Benar: ${benar} dari 50 Soal)`);
+        window.location.href = 'index.html';
+    }
+</script>
+</body>
+</html>
